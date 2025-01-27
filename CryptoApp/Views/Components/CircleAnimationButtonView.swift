@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CircleAnimationButton: View {
+struct CircleAnimationButtonView: View {
     @Binding var animate : Bool 
     
     var body: some View {
@@ -24,7 +24,7 @@ struct CircleAnimationButton: View {
 
 #Preview {
     @Previewable @State var animate = false
-    CircleAnimationButton(animate: $animate)
+    CircleAnimationButtonView(animate: $animate)
         .onTapGesture {
             animate.toggle()
         }
