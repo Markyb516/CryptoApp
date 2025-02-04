@@ -214,6 +214,9 @@ class PreviewProvider {
         priceChangePercentage24HInCurrency: 3952.64,
         currentHoldings: 1.509890)
      
+    let marketCap = StatisticsModel(title: "Market Cap", value: 2.56, percentageChange: 0.06)
+    let tradingVolume = StatisticsModel(title: "24h Volume", value: 333.83)
+    let btcDominance = StatisticsModel(title: "BTC Dominance", value: 42.67)
         
     var currentHoldingsValue : Double? {
         (coin.currentPrice) * (coin.currentHoldings ?? 0)

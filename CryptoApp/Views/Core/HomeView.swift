@@ -17,6 +17,14 @@ struct HomeView: View {
                 options
                     .padding(.horizontal)
                 Spacer()
+                HStack(alignment:.top){
+                    StatisticsView(title: "Market Cap", value: 2.25, percentageChange: 2.3).padding(.horizontal)
+                    StatisticsView(title: "24h Volume", value: 2.25)
+                        .padding(.horizontal)
+                    StatisticsView(title: "BTC Dominance", value: 2.25)
+                }.padding(.vertical)
+                
+                SearchBarView(VM: homeVM)
                 coinHeaders
                 
                 if let coins = homeVM.allcoins , !showPortfolio{
@@ -79,6 +87,7 @@ struct HomeView: View {
                 }
         }
     }
+    
     
     
 }

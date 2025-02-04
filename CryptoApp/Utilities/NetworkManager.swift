@@ -8,10 +8,9 @@
 import Foundation
 
 class NetworkManager{
-    static var instance = NetworkManager()
     private init(){}
     
-    func getRequest<T:Codable>(url : URL, type : T.Type) async throws -> T {
+    static func getRequest<T:Codable>(url : URL, type : T.Type) async throws -> T {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = ["accept": "application/json"]
@@ -20,7 +19,13 @@ class NetworkManager{
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let decoderResult = try decoder.decode(T.self, from: data)
         return decoderResult
-          
-        
+    }
+    
+    static func request(url : URL ) async throws -> Data {
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = ["accept": "application/json"]
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return data
     }
 }

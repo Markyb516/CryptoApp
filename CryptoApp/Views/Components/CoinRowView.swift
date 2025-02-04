@@ -21,14 +21,13 @@ struct CoinRowView: View {
     
     var coinIcon : some View {
         HStack {
-            Circle()
-                .frame(maxWidth: 30 , maxHeight: 30)
+            CoinImageView(url: Coin.image, name: Coin.name).frame(width: 30 , height: 30)
+                    
             Text(Coin.symbol.uppercased())
         }
     }
     
     var coinDetails : some View {
-        
         HStack() {
             if showHoldings {
                 VStack(alignment: .trailing){
