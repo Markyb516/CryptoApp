@@ -6,41 +6,49 @@
 //
 
 import SwiftUI
-
+import SwiftData
 struct HomeView: View {
     @State private var showPortfolio = false
+    @State private var addCoin = false
     @Environment(HomeVM.self) private var homeVM
+    @State var open = true
+    
     
     var body: some View {
         ZStack{
             VStack{
                 options
                     .padding(.horizontal)
-                Spacer()
-                HStack(alignment:.top){
-                    StatisticsView(title: "Market Cap", value: 2.25, percentageChange: 2.3).padding(.horizontal)
-                    StatisticsView(title: "24h Volume", value: 2.25)
-                        .padding(.horizontal)
-                    StatisticsView(title: "BTC Dominance", value: 2.25)
-                }.padding(.vertical)
+                
+                if showPortfolio{
+                    portfolioMarketData
+                }
+                else {
+                    if homeVM.marketStats != nil {
+                    livePricesMarketData
+                    }
+                    else{
+                        ProgressView()
+                    }
+                }
                 
                 SearchBarView(VM: homeVM)
-                coinHeaders
+                coinHeaders.padding(.horizontal)
                 
                 if let coins = homeVM.allcoins , !showPortfolio{
                     CoinListView(coins: coins , portfolioView: false)
+                        .padding(.horizontal)
                         .transition(.move(edge: .leading))
                 }
                 else{
-                    if let portfolioCoin = homeVM.portfolioCoins {
+                    // need to fix the portfolioCoin functionality
+                    if let portfolioCoin =  homeVM.portfolioCoins(){
                         CoinListView(coins: portfolioCoin , portfolioView: true)
+                            .padding(.horizontal)
                             .transition(.move(edge: .trailing))
                     }
-                    else{
-                        ContentUnavailableView("Error", systemImage: "exclamationmark.triangle.fill",description: Text("No data is available"))
-                    }
-                    
                 }
+            
             }
             
         }
@@ -69,9 +77,12 @@ struct HomeView: View {
     
     private var options: some View {
         HStack{
-            NavigationButtonView(imageName: showPortfolio ? "plus" : "info" )
-                .background(CircleAnimationButtonView(animate: $showPortfolio))
-                .animation(.none , value: showPortfolio)
+            if showPortfolio{
+                plusButton
+            }
+            else{
+                infoButton
+            }
             Spacer()
             Text(showPortfolio ? "Portfolio" : "Live Prices")
                 .font(.headline)
@@ -89,14 +100,63 @@ struct HomeView: View {
     }
     
     
+    var plusButton:some View {
+        NavigationButtonView(imageName: "plus")
+            .background(CircleAnimationButtonView(animate: $showPortfolio))
+            .animation(.none , value: showPortfolio)
+            .onTapGesture {
+                addCoin.toggle()
+            }
+            .sheet(isPresented: $addCoin,onDismiss: {
+                open.toggle()
+            }) {
+                AddHoldingsView( VM: homeVM)
+            }
+        
+            
+
+    }
+    var infoButton:some View{
+        NavigationButtonView(imageName: "info")
+            .background(CircleAnimationButtonView(animate: $showPortfolio))
+            .animation(.none , value: showPortfolio)
+
+    }
+    
+    private var livePricesMarketData:some View {
+        HStack(alignment:.top ){
+            MarketDataView(title: "Market Cap", value: homeVM.marketStats?.marketCap ?? 0, percentageChange: homeVM.marketStats?.marketPecentageChange ,percentageBased: false)
+                  
+            MarketDataView(title: "24h Volume", value: homeVM.marketStats?.marketVolume ?? 0, percentageBased: false)
+                  
+            MarketDataView(title: "BTC Dominance", value: homeVM.marketStats?.btcMarketDominance ?? 0 , percentageBased: true)
+        }
+        .transition(.move(edge: .leading))
+        
+    }
+    
+    private var portfolioMarketData:some View{
+        
+        HStack(alignment: .top) {
+            MarketDataView(title: "24h Volume", value: homeVM.marketStats?.marketVolume ?? 0, percentageBased: false)
+               
+            MarketDataView(title: "BTC Dominance", value: homeVM.marketStats?.btcMarketDominance ?? 0 ,percentageBased: true)
+            
+            MarketDataView(title: "Portfolio Value", value: 499, percentageChange: 0.70 , percentageBased: false)
+        }.transition(.move(edge: .trailing))
+    }
+    
     
 }
 
 #Preview {
-    @Previewable @State var homeVM = HomeVM()
-    NavigationStack{
+    
+     var homeVM = HomeVM(swiftDataManager:SwiftDataManager.shared)
+  
+     NavigationStack{
         HomeView()
             .environment(homeVM)
         
-    }
+     }  
+
 }

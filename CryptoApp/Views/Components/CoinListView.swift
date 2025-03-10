@@ -29,6 +29,6 @@ struct CoinListView: View {
     }
 }
 
-#Preview {
-    CoinListView(coins: [PreviewProvider.instance.coin,PreviewProvider.instance.coin,PreviewProvider.instance.coin] , portfolioView: false)
-}
+//#Preview {
+//    CoinListView(coins: [PreviewProvider.instance.coin,PreviewProvider.instance.coin,PreviewProvider.instance.coin] , portfolioView: false)
+//}

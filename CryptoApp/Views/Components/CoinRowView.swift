@@ -59,10 +59,10 @@ struct CoinRowView: View {
 }
 
 
-#Preview(traits: .sizeThatFitsLayout) {
-    
-    CoinRowView(Coin: PreviewProvider.instance.coin , showHoldings: false)
-    
-
-    
-}
+//#Preview(traits: .sizeThatFitsLayout) {
+//    
+//    CoinRowView(Coin: PreviewProvider.instance.coin , showHoldings: false)
+//    
+//
+//    
+//}

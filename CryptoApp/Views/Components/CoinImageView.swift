@@ -25,10 +25,10 @@ struct CoinImageView: View {
     }
 }
 
-#Preview {
-    Circle().frame(width: 60, height: 60) .overlay {
-        CoinImageView(url: PreviewProvider.instance.coin.image, name: PreviewProvider.instance.coin.name)
-    }
-       
- 
-}
+//#Preview {
+//    Circle().frame(width: 60, height: 60) .overlay {
+//        CoinImageView(url: PreviewProvider.instance.coin.image, name: PreviewProvider.instance.coin.name)
+//    }
+//       
+// 
+//}

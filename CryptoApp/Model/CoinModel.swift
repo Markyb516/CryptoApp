@@ -6,38 +6,45 @@
 //
 
 import Foundation
+import SwiftData
 
-struct Coin : Codable , Identifiable {
+ struct Coin : Codable , Identifiable {
     
-    let id, symbol, name , image: String
-        let currentPrice: Double
-        let marketCap, marketCapRank, fullyDilutedValuation, totalVolume: Double?
-        let high24H, low24H: Double?
-        let priceChange24H, priceChangePercentage24H: Double?
-    let marketCapChange24H: Double?
-        let marketCapChangePercentage24H: Double?
-    let circulatingSupply, totalSupply, maxSupply, ath: Double?
-        let athChangePercentage: Double?
-        let athDate: String?
-        let atl, atlChangePercentage: Double?
-        let atlDate: String?
-        let lastUpdated: String?
-        let sparklineIn7D: SparklineIn7D?
-        let priceChangePercentage24HInCurrency: Double?
-        let currentHoldings : Double?
-
-
+        var id, symbol, name , image: String
+        var currentPrice: Double
+        var marketCap, marketCapRank, fullyDilutedValuation, totalVolume: Double?
+        var high24H, low24H: Double?
+        var priceChange24H, priceChangePercentage24H: Double?
+        var marketCapChange24H: Double?
+        var marketCapChangePercentage24H: Double?
+        var circulatingSupply, totalSupply, maxSupply, ath: Double?
+        var athChangePercentage: Double?
+        var athDate: String?
+        var atl, atlChangePercentage: Double?
+        var atlDate: String?
+        var lastUpdated: String?
+        var sparklineIn7D: SparklineIn7D?
+        var priceChangePercentage24HInCurrency: Double?
+        var currentHoldings : Double?
     
   
-    
 
-    var currentHoldingsValue : Double {
-        ( currentHoldings ?? 0 ) * currentPrice
-    }
+        var currentHoldingsValue : Double {
+            (currentHoldings ?? 0.0) * currentPrice
+        }
+     
+//     mutating func addHoldings(by : Double){
+//         currentHoldings += by
+//     }
+//     
+     mutating func updateHoldins(to:Double){
+         currentHoldings = to
+     }
 }
 struct SparklineIn7D : Codable {
     let price : [Double]?
 }
+
 
 
 

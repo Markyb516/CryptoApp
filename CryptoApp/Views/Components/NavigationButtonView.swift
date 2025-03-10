@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NavigationButtonView: View {
+    @Environment(\.colorScheme) var colorScheme
     var imageName : String
     var body: some View {
     
@@ -20,7 +21,7 @@ struct NavigationButtonView: View {
                 Circle()
                     .foregroundStyle(Color.theme.background)
                     
-                    .shadow(radius: 10.0)
+                    .shadow(color: colorScheme == .dark ? Color.theme.accent.opacity(0.6):Color.theme.accent.opacity(0.3) ,radius: 10.0)
                     
             }
             

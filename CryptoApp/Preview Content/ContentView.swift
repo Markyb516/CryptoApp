@@ -6,18 +6,27 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @State var VM : HomeVM
+    
     var body: some View {
         
         ZStack {
-            Color.theme.background
-                
+            Text("hit me")
+                .onTapGesture {
+                    VM.updatePortfolioCoinHolding(by: 8 )
+                }
             
         }.ignoresSafeArea()
     }
 }
 
 #Preview {
-    ContentView()
+
+    
+
+    ContentView(VM: HomeVM(swiftDataManager: SwiftDataManager.shared))
+       
 }

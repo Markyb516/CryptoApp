@@ -13,15 +13,15 @@ struct CircleAnimationButtonView: View {
     var body: some View {
             Circle()
                 .stroke(lineWidth: animate ? 10.0 : 0)
-                .foregroundStyle(animate ? .white : Color.theme.accent)
-                .animation(animate ? .smooth(duration: 0.5) : .none, value: animate)
+                .foregroundStyle(animate ? Color.theme.background : Color.theme.accent)
+                .animation(animate ? .smooth(duration: 0.6) : .none, value: animate)
     }
 }
 
-#Preview {
-    @Previewable @State var animate = false
-    CircleAnimationButtonView(animate: $animate)
-        .onTapGesture {
-            animate.toggle()
-        }
-}
+//#Preview {
+//    @Previewable @State var animate = false
+//    CircleAnimationButtonView(animate: $animate)
+//        .onTapGesture {
+//            animate.toggle()
+//        }
+//}

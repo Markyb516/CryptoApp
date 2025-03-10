@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SearchBarView: View {
     @Bindable var VM:HomeVM
@@ -40,8 +41,3 @@ struct SearchBarView: View {
     }
 }
 
-#Preview {
-    let test = HomeVM()
-
-    SearchBarView(VM: test)
-}

@@ -5,22 +5,39 @@
 //  Created by Markus Buchanan on 1/26/25.
 //
 
-import Foundation
+import SwiftUI
+
+import SwiftData
+
+enum PortfolioError : LocalizedError{
+    case portfolioNotFound
+    var errorDescription: String?{
+        switch self {
+        case .portfolioNotFound :
+            return "portfolio not found"
+        }
+    }
+}
 
 @Observable class HomeVM {
+    var swiftDataManager : SwiftDataManager
     var allcoins:[Coin]?
     var foundCoins:[Coin]?
+    var marketStats:MarketDataModel?
     private var filterTask: Task<Void,Never>? = nil
-        
+    var activeCoinToEdit : Coin?
+    
+    
+    
+    
     var filterText:String = ""{
         willSet{
             filterTask?.cancel()
-            
             filterTask = Task {
                 try? await Task.sleep(nanoseconds: 450_000_000) // 300ms delay
-
+                
                 if Task.isCancelled { return }
-
+                
                 let filteredCoins = if let coinsDisplayed = foundCoins, !newValue.isEmpty {
                     coinsDisplayed.filter {
                         $0.name.lowercased().contains(newValue.lowercased()) ||
@@ -29,40 +46,109 @@ import Foundation
                 } else {
                     foundCoins ?? nil
                 }
-
+                
                 await MainActor.run {
-                    print("ran")
+                    
                     allcoins = filteredCoins
                 }
             }
         }
     }
-    var portfolioCoins:[Coin]? {
-        if let coins = allcoins{
-            return coins.filter{$0.currentHoldings ?? -1 > 0 ? true : false}
-        }
-      return nil
-    }
     
-    init() {
+    
+    init(swiftDataManager : SwiftDataManager) {
+        //        let urlApp = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last
+        //        let url = urlApp!.appendingPathComponent("default.store")
+        //        if FileManager.default.fileExists(atPath: url.path) {
+        //            print("swiftdata db at \(url.absoluteString)")
+        //        }
+        
+        self.swiftDataManager  = swiftDataManager
+        
+        
+        
         Task{
-            if let coins = await getCoins(){
-                foundCoins = coins
-                await  MainActor.run {
-                    allcoins = coins
+            if let marketData = await CoinService.retrieveStats(){
+                if let coins = await getCoins(){
+                    foundCoins = coins
+                    await  MainActor.run {
+                        allcoins = coins
+                        marketStats = marketData
+                        
+                        self.swiftDataManager.addExamples()
+                    }
                 }
             }
         }
     }
     
+    
+    
+    
     private func getCoins() async -> [Coin]? {
-            do{
-                return try await CoinService.retrieveCoins()
-            }
-            catch{
-                print(error)
-                return nil
-            }
+        do{
+            return try await CoinService.retrieveCoins()
+        }
+        catch{
+            print(error)
+            return nil
+        }
     }
     
+    
+    
+    
+    
+    
+    
+    @MainActor func portfolioCoins() -> [Coin]? {
+        let fetchedResult = swiftDataManager.fetchPortfolio()
+        if let portfolio = fetchedResult.first, !fetchedResult.isEmpty , let coins = allcoins {
+            
+            var portfolioDict:[String:Double] = [:]
+            
+            portfolio.portfolioCoins.forEach { portfolioDict[$0.name] = $0.currentHoldings  }
+            
+            var  holder =  coins.filter{ coin in
+                portfolioDict[coin.name] != nil ? true : false
+            }
+            
+            holder = holder.map{ coin in
+                var mutableCoin = coin
+                mutableCoin.currentHoldings = portfolioDict[coin.name , default: 0.0]
+                return mutableCoin
+            }
+            return holder
+        }
+        return nil
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @MainActor func updatePortfolioCoinHolding( by amt: Double ){
+        if let activeCoinToEdit {
+            print(self.swiftDataManager.editCoin(activeCoinToEdit, by:amt))
+            
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
 }
+   
+
+    
+
