@@ -10,22 +10,44 @@ import SwiftUI
 struct CoinListView: View {
     var coins : [Coin]
     var portfolioView : Bool
+    @Environment(HomeVM.self) private var homeVM
+
     
     var body: some View {
         List{
             ForEach(coins){ coin in
-                CoinRowView(Coin: coin, showHoldings: portfolioView)
-                    .listRowInsets(.init(top: 10, leading: 0, bottom: 10,trailing: 0))
-                    .listRowSeparator(.hidden)
-                    .background(
-                        Rectangle().frame(height:1).padding(.top).padding(.top).padding(.top)
-                     
-                    )
+                ZStack{
+                    CoinRowView(Coin: coin, showHoldings: portfolioView)
+                        .listRowInsets(.init(top: 10, leading: 0, bottom: 10,trailing: 0))
+                        .listRowSeparator(.hidden)
+                        .background(
+                            Rectangle().frame(height:1).padding(.top).padding(.top).padding(.top)
+                        )
+                    NavigationLink("",value: coin.id)
+                        .opacity(0.0)
+                }.listRowSeparator(.hidden)
+                    
+                
+              
             }
         }
+    
+        .refreshable(action: {
+            if !portfolioView{
+                homeVM.allcoins = await homeVM.getCoins()
+           
+            }
+            else{
+                homeVM.portfolioCoins = homeVM.getPortfolioCoins()
+            }
+        })
+        .navigationDestination(for: String.self, destination: { id in
+           
+                DetailedCoinView(coinID: id, VM: homeVM)
+            
+            
+        })
         .listStyle(.plain)
-        
-        
     }
 }
 

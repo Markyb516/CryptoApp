@@ -33,10 +33,8 @@ class SwiftDataManager {
     func addcoin(_ coin: PortfolioCoin) {
         modelContext.insert(coin)
         do {
-            print("saving")
             try modelContext.save()
         } catch {
-            print("ohh no trouble saving")
             fatalError(error.localizedDescription)
         }
     }
@@ -47,14 +45,11 @@ class SwiftDataManager {
             let portfolio  = try modelContext.fetch(FetchDescriptor<PortfolioModel>(predicate: #Predicate { !$0.portfolioCoins.isEmpty })).first
             print(portfolio!)
             if foundCoin != nil {
-                print("ran in founfCoin")
                 foundCoin?.currentHoldings += amt
-                print(foundCoin?.currentHoldings ?? "idk")
                 return true
             }
             else{
                 if let portfolio {
-                    print("in neew coinnnn")
                     let portfolioCoin = PortfolioCoin(id: activeCoin.id,
                                                       symbol:activeCoin.symbol
                                                       , name: activeCoin.name ,

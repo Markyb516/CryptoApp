@@ -12,8 +12,6 @@ import SwiftUI
     var image : UIImage? = nil
     
     init(url : String , coinName: String) {
-     
-        
         if let imageData = fileExist(directoryName: "Images", fileName: coinName){
             image = imageData
         }

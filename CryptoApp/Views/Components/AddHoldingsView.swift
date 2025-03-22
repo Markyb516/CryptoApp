@@ -29,12 +29,9 @@ struct AddHoldingsView: View {
                     coinList(coins: coins)
                         .padding(.bottom)
                 }
-                else{
-                    ProgressView()
-                }
-                if showForm{
-                    form
-                }
+                else{ProgressView()}
+                
+                if showForm{form}
                 
                 Spacer()
             }
@@ -42,7 +39,7 @@ struct AddHoldingsView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     exitButton
-                }
+            }
             }
         }
         
@@ -71,9 +68,10 @@ struct AddHoldingsView: View {
     
     var exitButton:some View {
         Button {
+            VM.portfolioCoins = VM.getPortfolioCoins()
             dismiss.callAsFunction()
         } label: {
-            Image(systemName:"xmark")
+            Image(systemName: "xmark")
         }
         .font(.title3)
     }
@@ -159,5 +157,5 @@ struct AddHoldingsView: View {
 #Preview {
     
     
-    AddHoldingsView( VM: HomeVM(swiftDataManager: SwiftDataManager.shared))
+    AddHoldingsView(VM:HomeVM(swiftDataManager: SwiftDataManager.shared))
 }

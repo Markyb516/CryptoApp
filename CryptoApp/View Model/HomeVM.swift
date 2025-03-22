@@ -26,8 +26,9 @@ enum PortfolioError : LocalizedError{
     var marketStats:MarketDataModel?
     private var filterTask: Task<Void,Never>? = nil
     var activeCoinToEdit : Coin?
-    
-    
+    var portfolioCoins: [Coin]?
+    var sortIndicatorLocation : arrowLocation?
+    var selectedDetailedCoin:DetailedCoinDataModel?
     
     
     var filterText:String = ""{
@@ -55,6 +56,17 @@ enum PortfolioError : LocalizedError{
         }
     }
     
+    @MainActor func getCoinDetails(id:String) async {
+        Task{
+            if let coinData = await CoinService.retrieveCoinData(id: id){
+                selectedDetailedCoin = coinData
+                print(coinData)
+                print(id)
+                 
+            }
+        }
+    }
+    
     
     init(swiftDataManager : SwiftDataManager) {
         //        let urlApp = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last
@@ -62,19 +74,22 @@ enum PortfolioError : LocalizedError{
         //        if FileManager.default.fileExists(atPath: url.path) {
         //            print("swiftdata db at \(url.absoluteString)")
         //        }
+     
         
         self.swiftDataManager  = swiftDataManager
         
         
         
         Task{
+            
+         
             if let marketData = await CoinService.retrieveStats(){
                 if let coins = await getCoins(){
                     foundCoins = coins
                     await  MainActor.run {
                         allcoins = coins
                         marketStats = marketData
-                        
+                        portfolioCoins = getPortfolioCoins()
                         self.swiftDataManager.addExamples()
                     }
                 }
@@ -85,7 +100,7 @@ enum PortfolioError : LocalizedError{
     
     
     
-    private func getCoins() async -> [Coin]? {
+     func getCoins() async -> [Coin]? {
         do{
             return try await CoinService.retrieveCoins()
         }
@@ -97,11 +112,90 @@ enum PortfolioError : LocalizedError{
     
     
     
+    @MainActor func sortByName(portfolio : Bool, ascending : Bool = true){
+        sortIndicatorLocation = .symbol
+        if let coins = allcoins , !portfolio{
+            if ascending{
+                var mutableCoins = coins
+                mutableCoins.sort { $0.symbol < $1.symbol }
+                allcoins = mutableCoins
+            }else{
+                var mutableCoins = coins
+                mutableCoins.sort { $0.symbol > $1.symbol }
+                allcoins = mutableCoins
+            }
+        }
+        else{
+            if let coins = portfolioCoins{
+                if ascending{
+                    var mutableCoins = coins
+                    mutableCoins.sort { $0.symbol < $1.symbol }
+                    portfolioCoins = mutableCoins
+                }else{
+                    var mutableCoins = coins
+                    mutableCoins.sort{ $0.symbol > $1.symbol }
+                    portfolioCoins = mutableCoins
+                }
+            }
+        }
+    }
+    
+    
+    @MainActor func sortByPrice(portfolio : Bool, ascending : Bool = true){
+        sortIndicatorLocation = .price
+
+        if let coins = allcoins , !portfolio{
+            if ascending {
+                var mutableCoins = coins
+                mutableCoins.sort { $0.currentPrice < $1.currentPrice }
+                allcoins = mutableCoins
+            }
+            else{
+                var mutableCoins = coins
+                mutableCoins.sort { $0.currentPrice > $1.currentPrice }
+                allcoins = mutableCoins
+            }
+        }
+        
+        else{
+            if let coins = portfolioCoins{
+                if ascending{
+                    var mutableCoins = coins
+                    mutableCoins.sort { $0.currentPrice < $1.currentPrice }
+                    portfolioCoins = mutableCoins
+                }else{
+                    var mutableCoins = coins
+                    mutableCoins.sort { $0.currentPrice > $1.currentPrice }
+                    portfolioCoins = mutableCoins
+                }
+            }
+        }
+    }
     
     
     
+    @MainActor func sortByHoldings(ascending : Bool = true){
+        sortIndicatorLocation = .holdings
+        if let coins = portfolioCoins{
+            if ascending{
+                var mutableCoins = coins
+                mutableCoins.sort { $0.currentHoldings ?? 0.0 < $1.currentHoldings ?? 0.0 }
+                portfolioCoins = mutableCoins
+            }
+            else{
+                var mutableCoins = coins
+                mutableCoins.sort { $0.currentHoldings ?? 0.0 > $1.currentHoldings ?? 0.0  }
+                portfolioCoins = mutableCoins
+                
+            }
+            
+        }
+        
+    }
     
-    @MainActor func portfolioCoins() -> [Coin]? {
+    
+    
+    @MainActor func getPortfolioCoins() -> [Coin]? {
         let fetchedResult = swiftDataManager.fetchPortfolio()
         if let portfolio = fetchedResult.first, !fetchedResult.isEmpty , let coins = allcoins {
             
@@ -144,6 +238,11 @@ enum PortfolioError : LocalizedError{
     
     
     
+    enum  arrowLocation{
+        case price
+        case holdings
+        case symbol
+    }
     
     
     

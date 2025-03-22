@@ -33,7 +33,6 @@ class CoinService  {
     
     
     
-/// tjhhjbhbjhbjh
     static func retrieveStats() async -> MarketDataModel?{
         if let url = URL(string: "https://api.coingecko.com/api/v3/global"){
             var request = URLRequest(url: url)
@@ -61,6 +60,36 @@ class CoinService  {
         return nil
     }
     
+    
+    
+    
+    static func retrieveCoinData(id:String) async -> DetailedCoinDataModel?{
+        if let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(id)"){
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.allHTTPHeaderFields = [
+                "accept": "application/json",
+                "x-cg-demo-api-key": "CG-3FRyPRKnHmiCnFpcgVWbXB6E"
+            ]
+            do{
+                let (data, _) = try await URLSession.shared.data(for: request)
+                
+                let decoder =  JSONDecoder()
+                
+                
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+            
+                return try decoder.decode(DetailedCoinDataModel.self, from: data)
+                
+            }
+            catch{
+                print(error)
+                return nil
+            }
+            
+        }
+        return nil
+    }
     
 }
 

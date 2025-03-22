@@ -11,13 +11,14 @@ struct HomeView: View {
     @State private var showPortfolio = false
     @State private var addCoin = false
     @Environment(HomeVM.self) private var homeVM
-    @State var open = true
+    
+
     
     
     var body: some View {
         ZStack{
             VStack{
-                options
+                settings
                     .padding(.horizontal)
                 
                 if showPortfolio{
@@ -33,49 +34,38 @@ struct HomeView: View {
                 }
                 
                 SearchBarView(VM: homeVM)
-                coinHeaders.padding(.horizontal)
+                CoinHeadersView(showPortfolio: $showPortfolio)
+                    .padding(.horizontal)
                 
                 if let coins = homeVM.allcoins , !showPortfolio{
                     CoinListView(coins: coins , portfolioView: false)
-                        .padding(.horizontal)
+                      
                         .transition(.move(edge: .leading))
                 }
                 else{
                     // need to fix the portfolioCoin functionality
-                    if let portfolioCoin =  homeVM.portfolioCoins(){
+                    if let portfolioCoin =  homeVM.portfolioCoins{
                         CoinListView(coins: portfolioCoin , portfolioView: true)
-                            .padding(.horizontal)
+                          
+                        
                             .transition(.move(edge: .trailing))
+                        
                     }
                 }
             
             }
             
-        }
-    }
-    
-    
-    
-    
-    private var coinHeaders : some View {
-        HStack{
-            Text("Coin")
-            Spacer()
-            HStack{
-                if showPortfolio{
-                    Text("Holdings")
-                    Spacer()
-                }
-                Text("Price")
-            }.frame(width: UIScreen.main.bounds.width * (2/4), alignment: .trailing)
             
         }
-        .font(.caption)
-        .foregroundStyle(Color.theme.secondaryText)
-        
+       
     }
     
-    private var options: some View {
+    
+    
+    
+   
+    
+    private var settings: some View {
         HStack{
             if showPortfolio{
                 plusButton
@@ -93,7 +83,8 @@ struct HomeView: View {
             NavigationButtonView(imageName: "chevron.right" ).rotationEffect( .degrees(showPortfolio ? 180 : 0) )
                 .onTapGesture {
                     withAnimation(.smooth) {
-                        showPortfolio.toggle()  
+                        homeVM.sortIndicatorLocation = nil
+                        showPortfolio.toggle()
                     }
                 }
         }
@@ -108,13 +99,11 @@ struct HomeView: View {
                 addCoin.toggle()
             }
             .sheet(isPresented: $addCoin,onDismiss: {
-                open.toggle()
+                homeVM.portfolioCoins = homeVM.getPortfolioCoins()
             }) {
                 AddHoldingsView( VM: homeVM)
             }
-        
             
-
     }
     var infoButton:some View{
         NavigationButtonView(imageName: "info")
@@ -151,7 +140,7 @@ struct HomeView: View {
 
 #Preview {
     
-     var homeVM = HomeVM(swiftDataManager:SwiftDataManager.shared)
+     let homeVM = HomeVM(swiftDataManager:SwiftDataManager.shared)
   
      NavigationStack{
         HomeView()
