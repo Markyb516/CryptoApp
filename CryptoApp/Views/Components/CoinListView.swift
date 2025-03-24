@@ -43,8 +43,7 @@ struct CoinListView: View {
         })
         .navigationDestination(for: String.self, destination: { id in
            
-                DetailedCoinView(coinID: id, VM: homeVM)
-            
+            DetailedCoinView(coinID: id, VM: homeVM)
             
         })
         .listStyle(.plain)

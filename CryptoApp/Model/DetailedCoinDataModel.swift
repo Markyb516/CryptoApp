@@ -8,23 +8,64 @@
 import Foundation
 
 struct DetailedCoinDataModel : Codable {
-        let id, symbol, name, webSlug: String?
+        let id, symbol, name: String?
         let blockTimeInMinutes: Double?
         let hashingAlgorithm: String?
-        let categories: [String]?
+       
         let previewListing: Bool?
         let additionalNotices: [String]?
         let description: Description?
         let links: Links?
-        let image: ImageLinks?
+    
         let countryOrigin, genesisDate: String?
-        let sentimentVotesUpPercentage, sentimentVotesDownPercentage: Double?
-        let watchlistPortfolioUsers, marketCapRank: Double?
-        let lastUpdated: String?
+  
+      
+        let marketData : MarketData
+       
+       
+    
 }
 
 struct Description : Codable {
     let en: String?
+}
+
+struct High24hr: Codable {
+    let usd : Double?
+}
+
+struct Low24hr: Codable {
+    let usd : Double?
+}
+
+struct TotalVolume : Codable{
+    let usd : Double?
+}
+
+
+struct MarketData : Codable {
+    let currentPrice : CurrentPrice
+    let marketCap : MarketCap
+    let priceChangePercentage24HInCurrency : PriceChangePercentage24hInCurrency
+    let priceChangePercentage24H : Double?
+    let high24H : High24hr?
+    let low24H : Low24hr
+    let totalVolume : TotalVolume?
+    let marketCapRank: Double?
+    let marketCapChangePercentage24H : Double?
+    let marketCapChange24H : Double?
+}
+
+struct MarketCap : Codable {
+    let usd : Double?
+}
+
+struct CurrentPrice : Codable {
+    let usd : Double?
+}
+
+struct PriceChangePercentage24hInCurrency : Codable{
+    let usd : Double?
 }
 
 
@@ -38,6 +79,4 @@ struct Links : Codable {
     let subredditURL: String?
 }
 
-struct ImageLinks : Codable {
-    let thumb, small, large: String?
-}
+

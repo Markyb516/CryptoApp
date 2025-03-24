@@ -34,7 +34,7 @@ struct MarketDataView: View {
             Text("\(value.marketDataFormat() ?? "0.00")").fontWeight(.heavy).font(.headline)
             if let percentageChange{
                 HStack{
-                    Image(systemName: value > 0 ? "triangleshape.fill" : "arrowtriangle.down.fill")
+                    Image(systemName: value > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
                     Text(percentageChange.toPercentage() ?? "0.00%")
                 }.foregroundStyle(value > 0 ? .greenApp : .redApp)
             }

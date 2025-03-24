@@ -17,7 +17,7 @@ class SwiftDataManager {
     
     @MainActor
     private init() {
-        // Change isStoredInMemoryOnly to false if you would like to see the data persistance after kill/exit the app
+        // Change isStoredInMemoryOnly to false if you would like to see the data persistance after exiting the app
         self.modelContainer = try! ModelContainer(for: PortfolioModel.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
         self.modelContext = modelContainer.mainContext
     }

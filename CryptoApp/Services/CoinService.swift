@@ -46,8 +46,9 @@ class CoinService  {
                 
                 let decoder =  JSONDecoder()
                 
+                
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
+                
                 return try decoder.decode(MarketDataModel.self, from: data)
                 
             }
@@ -65,6 +66,8 @@ class CoinService  {
     
     static func retrieveCoinData(id:String) async -> DetailedCoinDataModel?{
         if let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(id)"){
+            
+        
             var request = URLRequest(url: url)
             request.httpMethod = "GET"
             request.allHTTPHeaderFields = [
@@ -73,7 +76,7 @@ class CoinService  {
             ]
             do{
                 let (data, _) = try await URLSession.shared.data(for: request)
-                
+               
                 let decoder =  JSONDecoder()
                 
                 

@@ -60,8 +60,7 @@ enum PortfolioError : LocalizedError{
         Task{
             if let coinData = await CoinService.retrieveCoinData(id: id){
                 selectedDetailedCoin = coinData
-                print(coinData)
-                print(id)
+                print(coinData.marketData)
                  
             }
         }
@@ -69,13 +68,6 @@ enum PortfolioError : LocalizedError{
     
     
     init(swiftDataManager : SwiftDataManager) {
-        //        let urlApp = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last
-        //        let url = urlApp!.appendingPathComponent("default.store")
-        //        if FileManager.default.fileExists(atPath: url.path) {
-        //            print("swiftdata db at \(url.absoluteString)")
-        //        }
-     
-        
         self.swiftDataManager  = swiftDataManager
         
         
@@ -99,8 +91,19 @@ enum PortfolioError : LocalizedError{
     
     
     
+    private func getDatabaseLocation(){
+        
+        let urlApp = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last
+        
+        let url = urlApp!.appendingPathComponent("default.store")
+        
+        if FileManager.default.fileExists(atPath: url.path) {
+                  print("swiftdata db at \(url.absoluteString)")
+            }
+    }
+     
     
-     func getCoins() async -> [Coin]? {
+    func getCoins() async -> [Coin]? {
         do{
             return try await CoinService.retrieveCoins()
         }
