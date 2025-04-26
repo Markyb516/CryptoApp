@@ -13,7 +13,9 @@ class NetworkManager{
     static func getRequest<T:Codable>(url : URL, type : T.Type) async throws -> T {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.allHTTPHeaderFields = ["accept": "application/json"]
+        request.allHTTPHeaderFields = ["accept": "application/json",
+                                       "x-cg-demo-api-key": "CG-3FRyPRKnHmiCnFpcgVWbXB6E"
+        ]
         let (data, _) = try await URLSession.shared.data(for: request)
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -24,7 +26,8 @@ class NetworkManager{
     static func request(url : URL ) async throws -> Data {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.allHTTPHeaderFields = ["accept": "application/json"]
+        request.allHTTPHeaderFields = ["accept": "application/json",
+                                       "x-cg-demo-api-key": "CG-3FRyPRKnHmiCnFpcgVWbXB6E"]
         let (data, _) = try await URLSession.shared.data(for: request)
         return data
     }

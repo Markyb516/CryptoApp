@@ -15,7 +15,7 @@ class CoinService  {
             let urlQueryItems = [URLQueryItem(name: "vs_currency", value: "usd"),
                                  URLQueryItem(name: "sparkline", value: "true"),
                                  URLQueryItem(name: "price_change_percentage", value: "24h"),
-                                 URLQueryItem(name: "x_cg_demo_api_key", value: "CG-3FRyPRKnHmiCnFpcgVWbXB6E")]
+                                 ]
             components.queryItems = urlQueryItems
             
             if let componentsURL = components.url{
@@ -35,26 +35,12 @@ class CoinService  {
     
     static func retrieveStats() async -> MarketDataModel?{
         if let url = URL(string: "https://api.coingecko.com/api/v3/global"){
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.allHTTPHeaderFields = [
-                "accept": "application/json",
-                "x-cg-demo-api-key": "CG-3FRyPRKnHmiCnFpcgVWbXB6E"
-            ]
+            
             do{
-                let (data, _) = try await URLSession.shared.data(for: request)
-                
-                let decoder =  JSONDecoder()
-                
-                
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                
-                return try decoder.decode(MarketDataModel.self, from: data)
-                
+               return try await NetworkManager.getRequest(url: url, type: MarketDataModel.self)
             }
             catch{
                 print(error)
-                return nil
             }
             
         }
@@ -63,33 +49,39 @@ class CoinService  {
     
     
     
+    static func retieveCoinHistory(id:String) async -> HistoricCoinDataModel?{
+        if let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(id)/market_chart"), var components  = URLComponents(url: url, resolvingAgainstBaseURL: true) {
+            let urlQueryItems = [
+                URLQueryItem(name: "vs_currency", value: "usd"),
+                 URLQueryItem(name: "days", value: "365"),
+                 URLQueryItem(name: "interval", value: "daily"),
+                 URLQueryItem(name: "precision", value: "2"),
+            ]
+
+            
+            components.queryItems = urlQueryItems
+            if let componentsURL = components.url{
+                do {
+                    return try await NetworkManager.getRequest(url: componentsURL, type: HistoricCoinDataModel.self)
+                }
+                catch{
+                    print(error)
+                }
+            }
+        }
+        return nil
+    }
+    
     
     static func retrieveCoinData(id:String) async -> DetailedCoinDataModel?{
         if let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(id)"){
-            
-        
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.allHTTPHeaderFields = [
-                "accept": "application/json",
-                "x-cg-demo-api-key": "CG-3FRyPRKnHmiCnFpcgVWbXB6E"
-            ]
             do{
-                let (data, _) = try await URLSession.shared.data(for: request)
-               
-                let decoder =  JSONDecoder()
-                
-                
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-                return try decoder.decode(DetailedCoinDataModel.self, from: data)
-                
+               return try await NetworkManager.getRequest(url: url, type: DetailedCoinDataModel.self)
             }
             catch{
                 print(error)
                 return nil
             }
-            
         }
         return nil
     }

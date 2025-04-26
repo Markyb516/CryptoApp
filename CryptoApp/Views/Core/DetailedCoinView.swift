@@ -6,51 +6,42 @@
 //
 
 import SwiftUI
+import Charts
 
 struct DetailedCoinView: View {
    var coinID : String
    var VM : HomeVM
-    
- 
+    @State var showMark = false
+    @State var pricez = 0.0
+    @State var datez = ""
     var body: some View {
         ZStack{
             if VM.selectedDetailedCoin != nil{
                 
                 ScrollView{
                     LazyVGrid(columns: [GridItem(.flexible(minimum:10, maximum: .infinity))], alignment: .leading) {
-                        Color(.blue)
-                            .frame(minHeight: 250)
-                        Text("Overview").font(.title).fontWeight(.black)
-                        
-                        Grid(alignment:.leading, verticalSpacing: 20){
-                            GridRow(alignment:.top){
-                                currentPrice
-                                  
-                                    
-                                
-                                marketCap
-                            }
-                            
-                                GridRow{
-                                    rank
-                                    volume
+                        if let chartData = VM.selectedDetailedCoinChartData{
+                            VStack {
+                                if showMark{
+                                    Text("Price:\(pricez) Day: \(datez)" )
                                 }
-                            Text("Additional Details").font(.title).fontWeight(.black)
-                            
-                            GridRow(alignment:.top){
-                                high24Hr
-                                low24Hr
-                            }
-                            
-                            GridRow(alignment:.top){
-                                    priceChange24Hr
-                                    marketCapChange24hr
-                                }
-                            GridRow(alignment:.top){
-                                blockTime
-                                hashingAlgorithm
+                                chart(data: chartData)
+                                    .frame(minHeight: 250)
                             }
                         }
+                        else{
+                            ProgressView()
+                        }
+                        
+                        
+                            
+                        Text("Overview").font(.title).fontWeight(.black)
+                        
+                        
+                        coinData
+                        
+                        
+                        
                     }
                 }.padding(.horizontal)
                 
@@ -68,6 +59,96 @@ struct DetailedCoinView: View {
             await VM.getCoinDetails(id: coinID)
         }
         .navigationTitle(Text(coinID.capitalized))
+    }
+    
+    
+    func chart( data : [DailyCoinData]) -> some View {
+        Chart(data) {
+            LineMark(x: .value("Day", $0.date), y: .value("Price", $0.price))
+                .foregroundStyle(.greenApp)
+            if let test = VM.test , showMark{
+                
+                RuleMark(x:.value("selection", test))
+                    
+            }
+            
+        }
+            .chartXAxis{
+                AxisMarks(values: .stride(by: .month, count: 1)) { value in
+                            AxisTick()
+                            AxisValueLabel(format: .dateTime.month(.abbreviated))
+                        }
+            }
+            .chartYAxis{
+                AxisMarks(stroke:StrokeStyle(lineWidth: 2.5))
+            }
+            .chartOverlay { chartProxy in
+                GeometryReader { geometry in
+                    Rectangle().fill(.clear).contentShape(Rectangle())
+                        .gesture(
+                            DragGesture(minimumDistance:0)
+                                .onChanged({ value in
+                                    guard let plug = chartProxy.plotFrame else{return}
+                                    let origin = geometry[plug].origin
+                                    
+                                    let location = CGPoint(
+                                                                x: value.location.x - origin.x,
+                                                                y: value.location.y - origin.y
+                                                            )
+                                    if let (date, price) = chartProxy.value(at: location, as: (Date, Double).self){
+                                        
+                                        pricez = price
+                                        datez = date.formatted(.dateTime)
+                                        
+                                        VM.test = date
+                                        showMark = true
+                                    }
+                        
+                                })
+                                .onEnded({ value in
+                                    showMark = false
+                                })
+                            
+                            
+                        )
+                }
+            }
+            
+    }
+    
+    var coinData : some View {
+        Grid(alignment:.leading, verticalSpacing: 20){
+            GridRow(alignment:.top){
+                currentPrice
+                  
+
+                
+                marketCap
+            }
+            
+                GridRow{
+                    rank
+                    volume
+                }
+            Text("Additional Details").font(.title).fontWeight(.black)
+            
+            GridRow(alignment:.top){
+                high24Hr
+                low24Hr
+            }
+            
+            GridRow(alignment:.top){
+                    priceChange24Hr
+                    marketCapChange24hr
+                }
+            GridRow(alignment:.top){
+                blockTime
+                hashingAlgorithm
+            }
+        }
+        
+        
+        
     }
     
     

@@ -29,7 +29,9 @@ enum PortfolioError : LocalizedError{
     var portfolioCoins: [Coin]?
     var sortIndicatorLocation : arrowLocation?
     var selectedDetailedCoin:DetailedCoinDataModel?
+    var selectedDetailedCoinChartData: [DailyCoinData]?
     
+    var test : Date?
     
     var filterText:String = ""{
         willSet{
@@ -60,7 +62,10 @@ enum PortfolioError : LocalizedError{
         Task{
             if let coinData = await CoinService.retrieveCoinData(id: id){
                 selectedDetailedCoin = coinData
-                print(coinData.marketData)
+                if let result = await CoinService.retieveCoinHistory(id: id){
+                    selectedDetailedCoinChartData = result.chartDataPoints
+                    test = result.chartDataPoints.first?.date
+                }
                  
             }
         }
