@@ -18,10 +18,10 @@ struct CircleAnimationButtonView: View {
     }
 }
 
-//#Preview {
-//    @Previewable @State var animate = false
-//    CircleAnimationButtonView(animate: $animate)
-//        .onTapGesture {
-//            animate.toggle()
-//        }
-//}
+#Preview {
+    @Previewable @State var animate = false
+    CircleAnimationButtonView(animate: $animate)
+        .onTapGesture {
+            animate.toggle()
+        }
+}

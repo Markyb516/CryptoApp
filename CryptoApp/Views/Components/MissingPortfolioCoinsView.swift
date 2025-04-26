@@ -9,7 +9,13 @@ import SwiftUI
 
 struct MissingPortfolioCoinsView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        
+            VStack{
+                Text("You Currently Don't Have Any Coins In Your Portfolio")
+                Text("Please Add In Some Coins")
+                
+            }
+        Spacer()
     }
 }
 

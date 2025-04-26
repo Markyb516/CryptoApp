@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CoinService  {
+final class CoinService : Sendable {
   private init(){}
     
       static func retrieveCoins() async throws -> [Coin] {
@@ -53,7 +53,7 @@ class CoinService  {
         if let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(id)/market_chart"), var components  = URLComponents(url: url, resolvingAgainstBaseURL: true) {
             let urlQueryItems = [
                 URLQueryItem(name: "vs_currency", value: "usd"),
-                 URLQueryItem(name: "days", value: "365"),
+                 URLQueryItem(name: "days", value: "7"),
                  URLQueryItem(name: "interval", value: "daily"),
                  URLQueryItem(name: "precision", value: "2"),
             ]

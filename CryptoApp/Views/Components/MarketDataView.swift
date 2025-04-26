@@ -13,6 +13,7 @@ struct MarketDataView: View {
     var percentageChange:Double?
     var percentageBased:Bool
     
+
     
     var body: some View {
         if percentageBased{

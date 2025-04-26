@@ -10,35 +10,40 @@ import SwiftData
 struct HomeView: View {
     @State private var showPortfolio = false
     @State private var addCoin = false
+    @State private var viewSettings = false
+
     @Environment(HomeVM.self) private var homeVM
     
-
-    
-    
     var body: some View {
-        ZStack{
+       
             VStack{
                 settings
                     .padding(.horizontal)
-                
-                if showPortfolio{
-                    portfolioMarketData
-                }
-                else {
-                    if homeVM.marketStats != nil {
-                    livePricesMarketData
+                ZStack{
+                    if showPortfolio{
+                        portfolioMarketData
+                          
+
+                            .transition(.move(edge: .trailing))
                     }
-                    else{
-                        ProgressView()
+                    else {
+                        if homeVM.marketStats != nil {
+                            livePricesMarketData
+                                .transition(.move(edge: .leading))
+                        }
+                        else{
+                            ProgressView()
+                        }
                     }
-                }
+                }.clipped()
                 
                 SearchBarView(VM: homeVM)
                 CoinHeadersView(showPortfolio: $showPortfolio)
                     .padding(.horizontal)
                 
-                if let coins = homeVM.allcoins , !showPortfolio{
+                if let coins = homeVM.allCoins , !showPortfolio{
                     CoinListView(coins: coins , portfolioView: false)
+                       
                       
                         .transition(.move(edge: .leading))
                 }
@@ -46,10 +51,14 @@ struct HomeView: View {
                     // need to fix the portfolioCoin functionality
                     if let portfolioCoin =  homeVM.portfolioCoins{
                         CoinListView(coins: portfolioCoin , portfolioView: true)
-                          
+                            
                         
                             .transition(.move(edge: .trailing))
                         
+                    }
+                    else{
+                        
+                        MissingPortfolioCoinsView()
                     }
                 }
             
@@ -58,7 +67,7 @@ struct HomeView: View {
             
         }
        
-    }
+    
     
     
     
@@ -99,7 +108,8 @@ struct HomeView: View {
                 addCoin.toggle()
             }
             .sheet(isPresented: $addCoin,onDismiss: {
-                homeVM.portfolioCoins = homeVM.getPortfolioCoins()
+                print("sheeet ")
+
             }) {
                 AddHoldingsView( VM: homeVM)
             }
@@ -109,7 +119,13 @@ struct HomeView: View {
         NavigationButtonView(imageName: "info")
             .background(CircleAnimationButtonView(animate: $showPortfolio))
             .animation(.none , value: showPortfolio)
-
+            .onTapGesture {
+                viewSettings.toggle()
+            }
+            .fullScreenCover(isPresented: $viewSettings, content: {
+                SettingsView()
+            })
+          
     }
     
     private var livePricesMarketData:some View {
@@ -120,7 +136,7 @@ struct HomeView: View {
                   
             MarketDataView(title: "BTC Dominance", value: homeVM.marketStats?.btcMarketDominance ?? 0 , percentageBased: true)
         }
-        .transition(.move(edge: .leading))
+       
         
     }
     
@@ -131,8 +147,11 @@ struct HomeView: View {
                
             MarketDataView(title: "BTC Dominance", value: homeVM.marketStats?.btcMarketDominance ?? 0 ,percentageBased: true)
             
-            MarketDataView(title: "Portfolio Value", value: 499, percentageChange: 0.70 , percentageBased: false)
-        }.transition(.move(edge: .trailing))
+            MarketDataView(title: "Portfolio Value", value: homeVM.portfolioValue ?? 0 , percentageBased: false)
+        }
+       
+     
+       
     }
     
     

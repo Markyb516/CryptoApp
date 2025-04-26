@@ -15,9 +15,6 @@ struct AddHoldingsView: View {
     @State var portfolioAMT = ""
     @State var holdingsValue = 0.00
     @State var showForm = false
-  
-    
-    
     var VM : HomeVM
     
     var body: some View {
@@ -25,13 +22,17 @@ struct AddHoldingsView: View {
             VStack(spacing:0){
                 SearchBarView(VM: VM).padding(.horizontal)
                 
-                if let coins = VM.allcoins{
+                if let coins = VM.allCoins{
                     coinList(coins: coins)
                         .padding(.bottom)
                 }
-                else{ProgressView()}
+                else{
+                    ProgressView()
+                }
                 
-                if showForm{form}
+                if showForm{
+                    form
+                }
                 
                 Spacer()
             }
@@ -53,7 +54,8 @@ struct AddHoldingsView: View {
         ScrollView(.horizontal,showsIndicators: false) {
             LazyHStack(spacing:15){
                 ForEach(coins){ coin in
-                    CoinCard(coinURL: coin.image, coinShortName: coin.symbol, coinName: coin.name).onTapGesture {
+                    CoinCard(coinURL: coin.image, coinShortName: coin.symbol, coinName: coin.name)
+                        .onTapGesture {
                         selectedCoin = coin.name
                         coinPrice = coin.currentPrice
                         portfolioAMT = String(0.0)
@@ -134,7 +136,10 @@ struct AddHoldingsView: View {
     
     
     var customDiver : some View {
-        Rectangle().frame(width:.infinity, height: 1)
+            
+        Rectangle().frame(maxWidth:.infinity, maxHeight: 1.0 ).padding(.horizontal)
+       
+       
     }
     
     var submitButton : some View{

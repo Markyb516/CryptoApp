@@ -14,17 +14,9 @@ struct HistoricCoinDataModel: Codable{
     
     var chartDataPoints: [DailyCoinData] {
         get{
-            prices.map{
-                let date = Date(timeIntervalSince1970: $0[0]/1000)
-//                let formatter  =  DateFormatter()
-//                formatter.dateFormat = "MM/dd/yy"
-//                let formattedDate =  formatter.string(from: date)
-            
-                return DailyCoinData(price: $0[1], date: date )}
+            prices.map{DailyCoinData(price: $0[1], date: Date(timeIntervalSince1970: $0[0]/1000))}
         }
     }
-  
-    
 }
 
 struct DailyCoinData : Identifiable{

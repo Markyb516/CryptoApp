@@ -17,36 +17,41 @@ struct CoinListView: View {
         List{
             ForEach(coins){ coin in
                 ZStack{
+                    
                     CoinRowView(Coin: coin, showHoldings: portfolioView)
                         .listRowInsets(.init(top: 10, leading: 0, bottom: 10,trailing: 0))
                         .listRowSeparator(.hidden)
                         .background(
                             Rectangle().frame(height:1).padding(.top).padding(.top).padding(.top)
                         )
+                    
                     NavigationLink("",value: coin.id)
-                        .opacity(0.0)
+                    .opacity(0.0)
                 }.listRowSeparator(.hidden)
                     
                 
               
             }
+        }.listStyle(.plain)
+        .refreshable{
+         
+
+                if !portfolioView{
+                    homeVM.allCoins = await homeVM.getCoins()
+                    
+                }
+                else{
+                    homeVM.portfolioCoins = homeVM.getPortfolioCoins()
+                }
+            
         }
-    
-        .refreshable(action: {
-            if !portfolioView{
-                homeVM.allcoins = await homeVM.getCoins()
-           
-            }
-            else{
-                homeVM.portfolioCoins = homeVM.getPortfolioCoins()
-            }
-        })
+        
+        
         .navigationDestination(for: String.self, destination: { id in
            
-            DetailedCoinView(coinID: id, VM: homeVM)
-            
+            DetailedCoinView(coinID: id)
         })
-        .listStyle(.plain)
+        
     }
 }
 

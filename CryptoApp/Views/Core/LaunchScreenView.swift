@@ -8,11 +8,46 @@
 import SwiftUI
 
 struct LaunchScreenView: View {
+    let loadingTittle = ["L","o","a","d","i","n","g",".",".","."]
+    let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+    @State var counter = 0
+    @State var loops = 0
+    @Binding var showApp : Bool
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack{
+            Image("logo").resizable().ignoresSafeArea()
+            HStack{
+                ForEach(loadingTittle.indices, id: \.self) { index in
+                    Text(loadingTittle[index])
+                        .foregroundStyle(.launchAccent)
+                        .font(.largeTitle)
+                        .fontWeight(.heavy)
+                        .offset(y: Int(index) == counter ? 338 : 350)
+                      
+                }
+        
+            }
+            
+        }.onReceive(timer) { _ in
+            
+            withAnimation(.smooth(duration: 0.7)) {
+                counter += 1
+                
+                
+                if counter == loadingTittle.count {
+                    counter = 0
+                    loops += 1
+                }
+                if loops == 3 {
+                    showApp = true
+                }
+            }
+        }
+        .transition( .move(edge: .leading))
+
     }
 }
-
-#Preview {
-    LaunchScreenView()
-}
+//
+//#Preview {
+//    LaunchScreenView()
+//}

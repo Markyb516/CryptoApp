@@ -7,7 +7,7 @@
 
 import Foundation
 
-class NetworkManager{
+final class NetworkManager : Sendable{
     private init(){}
     
     static func getRequest<T:Codable>(url : URL, type : T.Type) async throws -> T {

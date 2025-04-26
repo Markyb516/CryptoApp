@@ -12,6 +12,7 @@ import SwiftData
 struct CryptoApp: App {
     @State private var homeVM : HomeVM
     let modelContainer : ModelContainer
+    @State var showApp = false
     
     init() {
         let cointainer = try! ModelContainer(for: PortfolioModel.self)
@@ -20,10 +21,19 @@ struct CryptoApp: App {
     }
     
     var body: some Scene {
+        
         WindowGroup {
-            NavigationStack{
-                HomeView()
-                    .environment(homeVM)
+            ZStack{
+                NavigationStack{
+                    HomeView()
+                        .environment(homeVM)
+                }
+                ZStack{
+                    if !showApp{
+                        
+                        LaunchScreenView(showApp: $showApp)
+                    }
+                }
             }
         }
     }
