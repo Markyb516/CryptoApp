@@ -41,6 +41,5 @@ struct MarketDataModel: Codable{
     struct cryptoDate:Codable{
             let totalMarketCap, totalVolume, marketCapPercentage: [String: Double]
             let marketCapChangePercentage24HUsd: Double
-          
     }
 }

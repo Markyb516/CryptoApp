@@ -30,8 +30,8 @@ extension Double{
         let formatter = NumberFormatter()
         
         formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 2
-        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = Constants.maxFractionDigits
+        formatter.minimumFractionDigits = Constants.minFractionDigits
         
         if let currency = formatter.string(from: NSNumber(value: self)){
             return "$\(currency)"
@@ -46,8 +46,8 @@ extension Double{
         let formatter = NumberFormatter()
         
         formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 2
-        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = Constants.maxFractionDigits
+        formatter.minimumFractionDigits = Constants.minFractionDigits
         
         if let percentage = formatter.string(from: NSNumber(value: self)){
             return "\(percentage)%"
@@ -62,35 +62,42 @@ extension Double{
             
         case 1_000_000_000_000...:
             let roundedNumber = self / 1_000_000_000_000
-            guard let formattedResult =  roundedNumber.formatToString(maxDecimal: 2, minDecimal: 2) else {return nil}
+            guard let formattedResult =  roundedNumber.formatToString(maxDecimal: Constants.maxFractionDigits, minDecimal: Constants.minFractionDigits) else {return nil}
             return "\(formattedResult)Tr"
             
         case 1_000_000_000...:
             let roundedNumber = self / 1_000_000_000
-            guard let formattedResult =  roundedNumber.formatToString(maxDecimal: 2, minDecimal: 2) else {return nil}
+            guard let formattedResult =  roundedNumber.formatToString(maxDecimal: Constants.maxFractionDigits, minDecimal: Constants.minFractionDigits) else {return nil}
             return "\(formattedResult)Bn"
         case 1_000_000...:
             let roundedNumber = self / 1_000_000
-            guard let formattedResult =  roundedNumber.formatToString(maxDecimal: 2, minDecimal: 2) else {return nil}
+            guard let formattedResult =  roundedNumber.formatToString(maxDecimal: Constants.maxFractionDigits, minDecimal: Constants.minFractionDigits) else {return nil}
             return "\(formattedResult)M"
         case 1_000...:
             let roundedNumber = self / 1_000
-            guard let formattedResult =  roundedNumber.formatToString(maxDecimal: 2, minDecimal: 2) else {return nil}
+            guard let formattedResult =  roundedNumber.formatToString(maxDecimal: Constants.maxFractionDigits, minDecimal: Constants.minFractionDigits) else {return nil}
             return "\(formattedResult)K"
 
         default:
-           return self.formatToString(maxDecimal: 2, minDecimal: 2)
+           return self.formatToString(maxDecimal: Constants.maxFractionDigits, minDecimal: Constants.minFractionDigits)
         }
     
     
     }
-        
     
+    // MARK: -  Constants
+    
+     private struct Constants {
+        static let maxFractionDigits = 2
+        static let minFractionDigits = 2
     }
     
+    }
+
+
+
+    
  
-    
-    
     
 
 

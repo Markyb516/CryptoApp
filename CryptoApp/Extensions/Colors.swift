@@ -12,9 +12,18 @@ extension Color {
 }
 
 struct ColorTheme{
-    let accent =  Color("AccentColor")
-    let background = Color("BackgroundColor")
-    let greenAppColor = Color("GreenAppColor")
-    let redAppColor = Color("RedAppColor")
-    let secondaryText = Color("SecondaryTextColor")
+    let accent =  Color(Constants.accentColor)
+    let background = Color(Constants.background)
+    let greenAppColor = Color(Constants.greenApp)
+    let redAppColor = Color(Constants.redApp)
+    let secondaryText = Color(Constants.secondary)
+    
+// MARK: -  Constants
+    private struct Constants{
+        static let accentColor = "AccentColor"
+        static let background = "BackgroundColor"
+        static let greenApp = "GreenAppColor"
+        static let redApp = "RedAppColor"
+        static let secondary = "SecondaryTextColor"
+    }
 }

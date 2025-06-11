@@ -619,6 +619,8 @@ class PreviewProvider {
         (coin.currentPrice) * (coin.currentHoldings ?? 0.0)
     }
     
+    
+    
     private init() {
         
     }

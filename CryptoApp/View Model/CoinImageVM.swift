@@ -76,16 +76,15 @@ import SwiftUI
         if !FileManager.default.fileExists(atPath: createdDirectory.path(percentEncoded: false), isDirectory: &isDirectory){
             do {
                 try FileManager.default.createDirectory(at: createdDirectory, withIntermediateDirectories: false)
-                // print("Directory Created")
                 return createdDirectory
             }
             catch{
                 print(error)
-                // print("create directory failed")
+                
                 return nil
             }
         }
-        // print("Directory Already Created")
+        
         return createdDirectory
     }
     
@@ -100,7 +99,6 @@ import SwiftUI
             }
             catch{
                 print(error)
-                //  print("image write to directory failed")
                 return nil
             }
         }

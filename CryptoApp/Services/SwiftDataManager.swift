@@ -101,17 +101,6 @@ class SwiftDataManager {
         
     }
     
-    
-//    func addExamples(){
-//        let portfolio = PortfolioModel(id: 1)
-//        let coin = PortfolioCoin(id: "bitcoin", symbol: "btc", name: "Bitcoin", currentHoldings: 1, portfolio: portfolio)
-//        modelContext.insert(coin)
-//        do {
-//            try modelContext.save()
-//        } catch {
-//            fatalError(error.localizedDescription)
-//        }
-//    }
 }
 
 

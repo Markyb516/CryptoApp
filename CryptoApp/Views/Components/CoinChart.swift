@@ -141,14 +141,14 @@ struct CoinChart: View {
     
 }
 
-#Preview {
-    CoinChart(data: [DailyCoinData(price: 100_000, date: Date.now)
-    ,DailyCoinData(price: 101_000, date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!),
-        DailyCoinData(price: 101_000, date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!),
-                     DailyCoinData(price: 102_000, date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!),
-                     DailyCoinData(price: 103_000, date: Calendar.current.date(byAdding: .day, value: -4, to: Date())!),   DailyCoinData(price: 104_000, date: Calendar.current.date(byAdding: .day, value: -5, to: Date())!),
-                     DailyCoinData(price: 101_000, date: Calendar.current.date(byAdding: .day, value: -6, to: Date())!)
-                     
-                    ]
-              , VM: CoinDetailsVM())
-}
+//#Preview {
+//    CoinChart(data: [DailyCoinData(price: 100_000, date: Date.now)
+//    ,DailyCoinData(price: 101_000, date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!),
+//        DailyCoinData(price: 101_000, date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!),
+//                     DailyCoinData(price: 102_000, date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!),
+//                     DailyCoinData(price: 103_000, date: Calendar.current.date(byAdding: .day, value: -4, to: Date())!),   DailyCoinData(price: 104_000, date: Calendar.current.date(byAdding: .day, value: -5, to: Date())!),
+//                     DailyCoinData(price: 101_000, date: Calendar.current.date(byAdding: .day, value: -6, to: Date())!)
+//                     
+//                    ]
+//              , VM: CoinDetailsVM())
+//}

@@ -33,10 +33,7 @@ import SwiftData
             (currentHoldings ?? 0.0) * currentPrice
         }
      
-//     mutating func addHoldings(by : Double){
-//         currentHoldings += by
-//     }
-//     
+  
      mutating func updateHoldins(to:Double){
          currentHoldings = to
      }
