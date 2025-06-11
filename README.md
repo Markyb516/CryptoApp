@@ -45,6 +45,8 @@ CryptoApp follows the **MVVM** (Model-View-ViewModel) pattern for scalability an
 
 ---
 
+## Screenshots
+<img width="261" alt="Image" src="https://github.com/user-attachments/assets/b92a7781-41ff-4718-b1b0-70a432f47c7c" />
 
 ## ✉️ Contact
 
