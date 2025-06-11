@@ -108,8 +108,7 @@ struct DetailedCoinInfoGrid: View {
     
     var priceChange24Hr : some View{
         VStack(alignment:.leading){
-            Text("24h Price Change")
-            Text("\(VM.selectedDetailedCoin?.marketData.priceChangePercentage24HInCurrency.usd?.toCurrency() ?? "N/A")")
+            Text("24h Price Change %")
             HStack{
                 Image(systemName: VM.selectedDetailedCoin?.marketData.priceChangePercentage24H ?? -1 > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
                     .foregroundStyle(VM.selectedDetailedCoin?.marketData.priceChangePercentage24H ?? -1 > 0 ? .greenApp : .redApp)

@@ -63,12 +63,14 @@ struct SettingsView: View {
                 
                     .frame(width: 100,height: 100)
                     .clipShape(RoundedRectangle(cornerRadius: 34.0))
-                Text("This app was developed by Markus Buchanan. It uses SwiftUI and is written 100% in Swift. The project benefits from multi-threading and data persistance")
+                Text("This app was developed with SwiftUI and is written 100% in Swift. The project benefits from multi-threading and data persistance")
                 
-                Text("Visit Website 🥳")
-                    .foregroundStyle(.blue)
-                    .fontWeight(.semibold)
-                    .padding(.top)
+                if let url = URL(string:"https://github.com/Markyb516"){
+                    Link("Visit my github 👨🏾‍💻", destination: url)
+                        .foregroundStyle(.blue)
+                        .fontWeight(.semibold)
+                        .padding(.top)
+                }
             }
         }
         
@@ -82,11 +84,12 @@ struct SettingsView: View {
                     .scaledToFit()
                 Text("The cryptocurrency data that is used in this app comes from a free API from CoinGecko! Prices may be slightly delayed")
                 
-                Text("Visit CoinGecko🥳")
-                    .foregroundStyle(.blue)
-                    .fontWeight(.semibold)
-                    .padding(.top)
-                
+                if let url = URL(string: "https://www.coingecko.com"){
+                    Link("Visit CoinGecko", destination: url )
+                        .foregroundStyle(.blue)
+                        .fontWeight(.semibold)
+                        .padding(.top)
+                }
             }
         }
     }

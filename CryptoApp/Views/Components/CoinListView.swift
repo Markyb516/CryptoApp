@@ -14,43 +14,59 @@ struct CoinListView: View {
 
     
     var body: some View {
-        List{
-            ForEach(coins){ coin in
-                ZStack{
+        if !portfolioView{
+            List{
+                ForEach(coins){ coin in
+                    ZStack{
+                        
+                        CoinRowView(Coin: coin, showHoldings: portfolioView)
+                            .listRowInsets(.init(top: 10, leading: 0, bottom: 10,trailing: 0))
+                            .listRowSeparator(.hidden)
+                            .background(
+                                Rectangle().frame(height:1).padding(.top).padding(.top).padding(.top)
+                            )
+                        
+                        NavigationLink("",value: coin.id)
+                            .opacity(0.0)
+                    }.listRowSeparator(.hidden)
                     
-                    CoinRowView(Coin: coin, showHoldings: portfolioView)
-                        .listRowInsets(.init(top: 10, leading: 0, bottom: 10,trailing: 0))
-                        .listRowSeparator(.hidden)
-                        .background(
-                            Rectangle().frame(height:1).padding(.top).padding(.top).padding(.top)
-                        )
                     
-                    NavigationLink("",value: coin.id)
-                    .opacity(0.0)
-                }.listRowSeparator(.hidden)
                     
-                
-              
+                }
+            }.listStyle(.plain)
+                .refreshable{homeVM.allCoins = await homeVM.getCoins()}
+                .navigationDestination(for: String.self, destination: { id in
+                    DetailedCoinView(coinID: id)
+                })
+        }
+        else{
+            List{
+                ForEach(coins){ coin in
+                    ZStack{
+                        
+                        CoinRowView(Coin: coin, showHoldings: portfolioView)
+                            .listRowInsets(.init(top: 10, leading: 0, bottom: 10,trailing: 0))
+                            .listRowSeparator(.hidden)
+                            .background(
+                                Rectangle().frame(height:1).padding(.top).padding(.top).padding(.top)
+                            )
+                        
+                        NavigationLink("",value: coin.id)
+                        .opacity(0.0)
+                    }.listRowSeparator(.hidden)
+                }
+                .onDelete(perform: homeVM.removeCoin)
             }
-        }.listStyle(.plain)
-        .refreshable{
-         
 
-                if !portfolioView{
-                    homeVM.allCoins = await homeVM.getCoins()
-                    
-                }
-                else{
-                    homeVM.portfolioCoins = homeVM.getPortfolioCoins()
-                }
+            .listStyle(.plain)
+            .refreshable{homeVM.portfolioCoins = homeVM.getPortfolioCoins()}
+        
+            .navigationDestination(for: String.self, destination: { id in
+                DetailedCoinView(coinID: id)
+            })
+            
             
         }
-        
-        
-        .navigationDestination(for: String.self, destination: { id in
-           
-            DetailedCoinView(coinID: id)
-        })
         
     }
 }

@@ -10,6 +10,7 @@ import SwiftData
 
 struct SearchBarView: View {
     @Bindable var VM:HomeVM
+    var portfolioSearch = false
     
     var body: some View {
         HStack{
@@ -19,6 +20,7 @@ struct SearchBarView: View {
             TextField("currency search", text:$VM.filterText, prompt: Text("search by name or symbol ")
                     .foregroundStyle(.secondaryText)
             )
+
             .autocorrectionDisabled()
             .padding(.vertical)
             
@@ -38,6 +40,7 @@ struct SearchBarView: View {
                 .shadow(color:.accent.opacity(0.4),radius: 10.0)
         )
         .padding(.bottom)
+       
     }
 }
 

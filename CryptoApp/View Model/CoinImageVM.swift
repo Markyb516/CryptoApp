@@ -12,10 +12,9 @@ import SwiftUI
 @Observable class CoinImageVM{
     @MainActor var image : UIImage? = nil
 
-    
     init(url : String , coinName: String) {
         
-        if let imageData = fileExist(directoryName: "Images", fileName: coinName){
+        if let imageData = fileImageSearch(directoryName: "Images", fileName: coinName){
             Task{
                 await MainActor.run {
                     image = imageData
@@ -24,13 +23,16 @@ import SwiftUI
         }
         
         else{
-            Task{
+            Task{ [weak self] in
+                
                 do {
-                    if let directory = createDirectory(directoryName: "Images"),
+                    if
+                       let self,
                        let imageData =  try await getImage(url: url),
+                       let directory = createDirectory(directoryName: "Images"),
                        let response =  createFile(directory: directory,fileName: coinName, image: imageData){
                         await MainActor.run {
-                            image = response
+                            self.image = response
                         }
                     }
                 }
@@ -56,7 +58,7 @@ import SwiftUI
     
     // MARK: - File Storage Methods
     
-    func fileExist(directoryName:String, fileName:String)-> UIImage?{
+    func fileImageSearch(directoryName:String, fileName:String)-> UIImage?{
         guard let cachesDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else{return nil }
         let createdDirectory = cachesDirectory.appending(path: directoryName)
         let fileToCheck = createdDirectory.appending(path:"\(fileName).png")

@@ -56,8 +56,9 @@ struct DetailedCoinView: View {
     
     func  coinDescription (description: String) ->  some View {
         VStack(alignment: .leading){
-            Text(description).lineLimit(expandDescription ? nil : 2 )
-                .animation(.easeInOut(duration: 1.0), value: expandDescription)
+            Text(description)
+                .lineLimit(expandDescription ? nil : 2 )
+                .animation(.easeInOut, value: expandDescription)
                
                
             Text(expandDescription ? "less" : "Read More..")

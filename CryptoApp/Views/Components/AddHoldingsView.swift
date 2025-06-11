@@ -16,23 +16,27 @@ struct AddHoldingsView: View {
     @State var holdingsValue = 0.00
     @State var showForm = false
     var VM : HomeVM
+    @State var incorrect = false
+    @FocusState private var qtyFocus : Bool
     
     var body: some View {
         NavigationStack{
             VStack(spacing:0){
                 SearchBarView(VM: VM).padding(.horizontal)
+                    
                 
                 if let coins = VM.allCoins{
                     coinList(coins: coins)
-                        .padding(.bottom)
                 }
                 else{
                     ProgressView()
                 }
                 
-                if showForm{
+               if showForm{
+                
                     form
-                }
+                        
+            }
                 
                 Spacer()
             }
@@ -54,11 +58,18 @@ struct AddHoldingsView: View {
         ScrollView(.horizontal,showsIndicators: false) {
             LazyHStack(spacing:15){
                 ForEach(coins){ coin in
-                    CoinCard(coinURL: coin.image, coinShortName: coin.symbol, coinName: coin.name)
+                    VStack{
+                        CoinCard(coinURL: coin.image, coinShortName: coin.symbol, coinName: coin.name)
+                        if coin.name == selectedCoin{
+                            Rectangle()
+                                .fill(.secondary)
+                                .frame(width: 48, height: 3)
+                                
+                        }
+                    }
                         .onTapGesture {
                         selectedCoin = coin.name
                         coinPrice = coin.currentPrice
-                        portfolioAMT = String(0.0)
                         VM.activeCoinToEdit = coin
                         showForm = true
                     }
@@ -80,25 +91,36 @@ struct AddHoldingsView: View {
     
     
     var form:some View {
-        VStack {
+        VStack(alignment: .leading) {
+            Button(action: {
+                showForm = false
+                selectedCoin = ""
+                VM.activeCoinToEdit = nil
+            }, label: {
+                Text("Cancel")
+                    .foregroundStyle(.white)
+                    .padding(7)
+                    .background(RoundedRectangle(cornerRadius: 5)
+                        .fill(.red)
+                    )
+            })
+                .padding()
             currentPrice
-            .padding(.vertical)
-            
+                .padding()
             customDiver
             
             portfolioAmount
-                   .padding(.vertical)
-            
+                .padding()
             customDiver
             
             currentValue
-                .padding(.vertical)
-            
+                .padding()
             customDiver
-            
-            submitButton.padding(.top)
+        
+            submitButton
+                .padding()
         }
-        .padding(.horizontal)
+        
     }
     
     
@@ -112,7 +134,7 @@ struct AddHoldingsView: View {
     
     var currentValue : some View{
         HStack{
-            Text("Current value:")
+            Text("Value:")
             Spacer()
             Text("\(coinPrice * (Double(portfolioAMT) ?? 0) )")
         }
@@ -120,32 +142,51 @@ struct AddHoldingsView: View {
     
     var portfolioAmount : some View{
         HStack {
-            Text("Amount in your portfolio") // Moved the descriptive text *outside* the TextField's HStack
+            Text("QTY") // Moved the descriptive text *outside* the TextField's HStack
             Spacer()
             VStack{
              
-                TextField("QTY", text: $portfolioAMT, axis: .vertical) // Use the placeholder as the label!
-                    .textFieldStyle(.roundedBorder) // Or another visible style
-                    .frame(maxWidth:90, maxHeight: 30)
+                TextField("QTY", text: $portfolioAMT, axis: .vertical)
+                    .keyboardType(.numberPad)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(maxWidth:90, minHeight: 30,maxHeight: 30)
+                    .border(!incorrect ?  .secondaryText : .redApp )
                     .multilineTextAlignment(.trailing)
                     .lineLimit(7)
                     .keyboardType(.numberPad)
+                    .submitLabel(.done)
+                    .focused($qtyFocus)
+                    .onAppear {
+                        Task{
+                            try? await Task.sleep(nanoseconds: 3_000_000)
+                            qtyFocus = true
+                        }
+                    }
             }
         }
     }
     
     
     var customDiver : some View {
-            
-        Rectangle().frame(maxWidth:.infinity, maxHeight: 1.0 ).padding(.horizontal)
+        Divider().overlay {
+            Rectangle().fill(.black).frame(height: 2)
+        }.padding(.horizontal)
        
        
     }
     
     var submitButton : some View{
         Button {
-            VM.updatePortfolioCoinHolding(by: Double(portfolioAMT) ?? 0.0)
-            showForm = false
+            if let qtyAMT = Double(portfolioAMT){
+                VM.updatePortfolioCoinHolding(by: qtyAMT)
+                selectedCoin = ""
+                VM.activeCoinToEdit = nil
+                showForm = false
+                portfolioAMT = ""
+            }
+            else{
+                incorrect = true
+            }
         } label: {
             ZStack{
                 RoundedRectangle(cornerRadius: 20.0)

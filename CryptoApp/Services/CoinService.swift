@@ -9,9 +9,10 @@ import Foundation
 
 final class CoinService : Sendable {
   private init(){}
+    static private let apiUrl = ProcessInfo.processInfo.environment["API_URL"]
     
       static func retrieveCoins() async throws -> [Coin] {
-        if let url = URL(string: "https://api.coingecko.com/api/v3/coins/markets") , var components = URLComponents(url: url, resolvingAgainstBaseURL: true){
+          if let apiUrl, let url  = URL(string: "\(apiUrl)coins/markets") , var components = URLComponents(url: url, resolvingAgainstBaseURL: true){
             let urlQueryItems = [URLQueryItem(name: "vs_currency", value: "usd"),
                                  URLQueryItem(name: "sparkline", value: "true"),
                                  URLQueryItem(name: "price_change_percentage", value: "24h"),
@@ -34,13 +35,13 @@ final class CoinService : Sendable {
     
     
     static func retrieveStats() async -> MarketDataModel?{
-        if let url = URL(string: "https://api.coingecko.com/api/v3/global"){
+        if let apiUrl , let url = URL(string: "\(apiUrl)global"){
             
             do{
                return try await NetworkManager.getRequest(url: url, type: MarketDataModel.self)
             }
             catch{
-                print(error)
+                print(error )
             }
             
         }
@@ -50,7 +51,7 @@ final class CoinService : Sendable {
     
     
     static func retieveCoinHistory(id:String) async -> HistoricCoinDataModel?{
-        if let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(id)/market_chart"), var components  = URLComponents(url: url, resolvingAgainstBaseURL: true) {
+        if let apiUrl , let url = URL(string: "\(apiUrl)coins/\(id)/market_chart"), var components  = URLComponents(url: url, resolvingAgainstBaseURL: true) {
             let urlQueryItems = [
                 URLQueryItem(name: "vs_currency", value: "usd"),
                  URLQueryItem(name: "days", value: "7"),
@@ -74,7 +75,7 @@ final class CoinService : Sendable {
     
     
     static func retrieveCoinData(id:String) async -> DetailedCoinDataModel?{
-        if let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(id)"){
+        if let apiUrl , let url = URL(string: "\(apiUrl)coins/\(id)"){
             do{
                return try await NetworkManager.getRequest(url: url, type: DetailedCoinDataModel.self)
             }

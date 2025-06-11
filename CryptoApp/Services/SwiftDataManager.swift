@@ -11,7 +11,7 @@ import SwiftData
 @MainActor
 class SwiftDataManager {
     private let modelContainer: ModelContainer
-    private let modelContext: ModelContext
+     let modelContext: ModelContext
     
     static let shared = SwiftDataManager()
     
@@ -41,6 +41,26 @@ class SwiftDataManager {
         }
     }
     
+  
+    func deleteCoin(_ activeCoin : Coin) -> Bool {
+        do {
+            let foundCoin = try modelContext.fetch(FetchDescriptor<PortfolioCoin>(predicate: #Predicate { $0.name == activeCoin.name })).first
+        
+           
+            
+            if let foundCoin  {
+                modelContext.delete(foundCoin)
+                return true
+            }
+
+        }
+        catch {
+           fatalError(error.localizedDescription)
+
+       }
+        return false
+
+    }
     func editCoin( _ activeCoin : Coin , by amt: Double) -> Bool{
         do {
             let foundCoin = try modelContext.fetch(FetchDescriptor<PortfolioCoin>(predicate: #Predicate { $0.name == activeCoin.name })).first
@@ -80,6 +100,8 @@ class SwiftDataManager {
         }
         
     }
+    
+    
 //    func addExamples(){
 //        let portfolio = PortfolioModel(id: 1)
 //        let coin = PortfolioCoin(id: "bitcoin", symbol: "btc", name: "Bitcoin", currentHoldings: 1, portfolio: portfolio)

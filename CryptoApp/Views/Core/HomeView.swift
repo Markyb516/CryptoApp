@@ -11,7 +11,7 @@ struct HomeView: View {
     @State private var showPortfolio = false
     @State private var addCoin = false
     @State private var viewSettings = false
-
+    
     @Environment(HomeVM.self) private var homeVM
     
     var body: some View {
@@ -36,33 +36,45 @@ struct HomeView: View {
                         }
                     }
                 }.clipped()
+                if showPortfolio{
+                    SearchBarView(VM: homeVM , portfolioSearch: true)
+                }
+                else{
+                    SearchBarView(VM: homeVM)
+                }
                 
-                SearchBarView(VM: homeVM)
+                
                 CoinHeadersView(showPortfolio: $showPortfolio)
                     .padding(.horizontal)
                 
                 if let coins = homeVM.allCoins , !showPortfolio{
                     CoinListView(coins: coins , portfolioView: false)
-                       
-                      
+
                         .transition(.move(edge: .leading))
+                    
                 }
                 else{
-                    // need to fix the portfolioCoin functionality
-                    if let portfolioCoin =  homeVM.portfolioCoins{
+                    if let portfolioCoin =  homeVM.portfolioCoins , showPortfolio{
                         CoinListView(coins: portfolioCoin , portfolioView: true)
+                           
+
                             
                         
                             .transition(.move(edge: .trailing))
                         
                     }
                     else{
-                        
-                        MissingPortfolioCoinsView()
+                        if showPortfolio{
+                            MissingPortfolioCoinsView()
+                        }
+                        else{
+                            Spacer()
+                        }
                     }
                 }
             
             }
+        
             
             
         }
@@ -81,6 +93,7 @@ struct HomeView: View {
             }
             else{
                 infoButton
+                
             }
             Spacer()
             Text(showPortfolio ? "Portfolio" : "Live Prices")
@@ -94,6 +107,7 @@ struct HomeView: View {
                     withAnimation(.smooth) {
                         homeVM.sortIndicatorLocation = nil
                         showPortfolio.toggle()
+                        homeVM.portfolioSearch.toggle()
                     }
                 }
         }
@@ -121,6 +135,7 @@ struct HomeView: View {
             .animation(.none , value: showPortfolio)
             .onTapGesture {
                 viewSettings.toggle()
+                
             }
             .fullScreenCover(isPresented: $viewSettings, content: {
                 SettingsView()

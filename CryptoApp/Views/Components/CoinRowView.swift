@@ -30,7 +30,7 @@ struct CoinRowView: View {
     var coinDetails : some View {
         HStack() {
             if showHoldings {
-                VStack(alignment: .trailing){
+                VStack(alignment: .leading){
                     Text(Coin.currentHoldingsValue.toCurrency() ?? "0")
                     Text(Coin.currentHoldings?.formatToString(maxDecimal: 6, minDecimal: 2) ?? "0")
                 }

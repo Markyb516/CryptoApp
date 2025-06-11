@@ -50,6 +50,7 @@ struct CoinChart: View {
             .chartYAxis{
                 AxisMarks(stroke:StrokeStyle(lineWidth: 2.5))
             }
+            .chartYScale(domain: [minPricePoint(data: data) , maxPricePoint(data: data) ])
         
     }
     
@@ -57,7 +58,7 @@ struct CoinChart: View {
     var chart : some View {
         Chart(data) {
             LineMark(x: .value("Day", $0.date), y: .value("Price", $0.price))
-                .foregroundStyle(data[0].price > data[1].price ? .greenApp : .redApp )
+               
                
             if let test = chartDetails?.date , showGuideLine{
                 
@@ -73,7 +74,7 @@ struct CoinChart: View {
     
     var annotationView : some View{
         ZStack{
-            RoundedRectangle(cornerRadius: 10.0 ).fill(data[0].price > data[1].price ? .greenApp : .redApp).opacity(0.2)
+            RoundedRectangle(cornerRadius: 10.0 ).fill(VM.selectedDetailedCoin?.marketData.priceChangePercentage24H ?? -1 > 0 ?  .greenApp : .redApp).opacity(0.2)
                
             VStack{
                 Text("Price:\(chartDetails?.price.formatToString(maxDecimal: 2, minDecimal: 2) ?? "N/A")")
@@ -84,8 +85,70 @@ struct CoinChart: View {
             
         }
     }
+    func maxPricePoint(data:[DailyCoinData]) -> Double {
+       
+        if let price = data.max(by: { $0.price < $1.price })?.price{
+            switch price {
+                
+            case 100_000...:
+               
+                return price + 1000
+                
+            case 10_000...:
+                
+                return price + 100
+            case 1_000...:
+                
+                return price + 50
+            case 100...:
+                return price + 10
+
+            default:
+                return price + 1
+            }
+        }
+        return .infinity
+    }
+    
+    
+    func minPricePoint(data:[DailyCoinData])-> Double{
+        if let price = data.min(by: { $0.price < $1.price })?.price{
+            switch price {
+                
+            case 100_000...:
+               
+                return price - 1000
+                
+            case 10_000...:
+                
+                return price - 100
+            case 1_000...:
+                
+                return price - 50
+            case 100...:
+                return price - 10
+
+            default:
+                return price - 1
+            }
+            
+            
+            
+            
+        }
+        return 0
+    }
+    
 }
 
-//#Preview {
-//    CoinChart(data: <#[DailyCoinData]#>, VM: <#CoinDetailsVM#>)
-//}
+#Preview {
+    CoinChart(data: [DailyCoinData(price: 100_000, date: Date.now)
+    ,DailyCoinData(price: 101_000, date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!),
+        DailyCoinData(price: 101_000, date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!),
+                     DailyCoinData(price: 102_000, date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!),
+                     DailyCoinData(price: 103_000, date: Calendar.current.date(byAdding: .day, value: -4, to: Date())!),   DailyCoinData(price: 104_000, date: Calendar.current.date(byAdding: .day, value: -5, to: Date())!),
+                     DailyCoinData(price: 101_000, date: Calendar.current.date(byAdding: .day, value: -6, to: Date())!)
+                     
+                    ]
+              , VM: CoinDetailsVM())
+}

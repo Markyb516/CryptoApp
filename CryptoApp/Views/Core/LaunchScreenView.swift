@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LaunchScreenView: View {
     let loadingTittle = ["L","o","a","d","i","n","g",".",".","."]
-    let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
     @State var counter = 0
     @State var loops = 0
     @Binding var showApp : Bool
@@ -22,7 +22,7 @@ struct LaunchScreenView: View {
                         .foregroundStyle(.launchAccent)
                         .font(.largeTitle)
                         .fontWeight(.heavy)
-                        .offset(y: Int(index) == counter ? 338 : 350)
+                        .offset(y: Int(index) == counter ? 334 : 350)
                       
                 }
         
@@ -30,7 +30,7 @@ struct LaunchScreenView: View {
             
         }.onReceive(timer) { _ in
             
-            withAnimation(.smooth(duration: 0.7)) {
+            withAnimation(.smooth(duration: 1)) {
                 counter += 1
                 
                 
@@ -38,7 +38,7 @@ struct LaunchScreenView: View {
                     counter = 0
                     loops += 1
                 }
-                if loops == 3 {
+                if loops == 2 {
                     showApp = true
                 }
             }

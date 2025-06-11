@@ -15,20 +15,25 @@ import SwiftData
     var swiftDataManager : SwiftDataManager
     var allCoins:[Coin]?
     var filteredCoins:[Coin]?
+    var portfolioFilteredCoins:[Coin]?
     var marketStats:MarketDataModel?
     var activeCoinToEdit : Coin?
     var portfolioCoins: [Coin]?
     var sortIndicatorLocation : arrowLocation?
+    var portfolioSearch = false
+    var portfolioValue: Double?
     var filterText:String = ""{
         willSet{
-            filterCoins(newValue: newValue)
+            if portfolioSearch{
+                filterCoins(newValue: newValue , portfolioSearch: true)
+            }
+            else{
+                filterCoins(newValue: newValue)
+            }
         }
     }
-    var portfolioValue:Double?{
-        guard let portfolioCoins else {return nil}
-        
-        return portfolioCoins.reduce(0) { $0 + $1.currentHoldingsValue }
-    }
+    
+    
     
     
     init(swiftDataManager : SwiftDataManager) {
@@ -41,44 +46,73 @@ import SwiftData
                         filteredCoins = coins
                         marketStats = marketData
                         portfolioCoins = getPortfolioCoins()
+                        portfolioFilteredCoins = portfolioCoins
                 }
             }
         }
-//        getDatabaseLocation()
 
     }
     
-    deinit{
-        print("HOME VM DEINIT")
-    }
     
     
     
-    private func filterCoins(newValue:String){
+    
+    private func filterCoins(newValue:String, portfolioSearch:Bool = false){
         filterTask?.cancel()
         filterTask = Task {
             try? await Task.sleep(nanoseconds: 450_000_000) // 300ms delay
             
             if Task.isCancelled { return }
             
-            let filteredCoins = if let coinsDisplayed = filteredCoins ,!newValue.isEmpty {
-                coinsDisplayed.filter {
-                    $0.name.lowercased().contains(newValue.lowercased()) ||
-                    $0.symbol.lowercased().contains(newValue.lowercased())
+            if !portfolioSearch{
+                let filteredCoins = if let coinsDisplayed = filteredCoins ,!newValue.isEmpty{
+                    coinsDisplayed.filter {
+                        $0.name.lowercased().contains(newValue.lowercased()) ||
+                        $0.symbol.lowercased().contains(newValue.lowercased())
+                    }
+                } else {
+                    filteredCoins ?? nil
                 }
-            } else {
-                filteredCoins ?? nil
+                
+                await MainActor.run {
+                    
+                    allCoins = filteredCoins
+                }
             }
             
-            await MainActor.run {
+            else{
+                let filteredCoins = if let coinDisplayed = await getPortfolioCoins(), !newValue.isEmpty{
+                     coinDisplayed.filter({
+                         $0.name.lowercased().contains(newValue.lowercased()) ||
+                         $0.symbol.lowercased().contains(newValue.lowercased())
+                     })
+                }else {
+                    await getPortfolioCoins()
+                }
                 
-                allCoins = filteredCoins
+                await MainActor.run {
+                   
+                    portfolioCoins = filteredCoins
+                }
             }
+            
+            
         }
     }
     
     
     
+    @MainActor func removeCoin(at indexSet : IndexSet){
+        
+        let holder = indexSet.map{  portfolioCoins?[$0] }
+        
+        if let coin = holder[0]{
+                print(swiftDataManager.deleteCoin(coin))
+
+        }
+        portfolioCoins?.remove(atOffsets: indexSet)
+        portfolioValue = portfolioCoins?.reduce(0){$0+$1.currentHoldingsValue}
+    }
     
     func getCoins() async -> [Coin]? {
         do{
@@ -127,7 +161,8 @@ import SwiftData
                 mutableCoin.currentHoldings = portfolioDict[coin.name , default: 0.0]
                 return mutableCoin
             }
-            print(holder.first?.name ?? "missing data")
+            portfolioFilteredCoins = holder
+            portfolioValue = holder.reduce(0){$0+$1.currentHoldingsValue}
             return holder
         }
         return nil
@@ -136,7 +171,7 @@ import SwiftData
 
     @MainActor func updatePortfolioCoinHolding( by amt: Double ){
         if let activeCoinToEdit {
-            print(self.swiftDataManager.editCoin(activeCoinToEdit, by:amt))
+            _ = self.swiftDataManager.editCoin(activeCoinToEdit, by:amt)
             
         }
     }
